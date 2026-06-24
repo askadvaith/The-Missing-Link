@@ -1,0 +1,731 @@
+# Map predicted tasks to HuggingFace benchmarks with metric types
+#
+# Evaluation uses log-probability scoring:
+#   - mcq_generative      → first-token logprob ranking (1 token per sample)
+#   - exact_numeric        → generate + extract number
+#   - token_f1             → generate + SQuAD-style token F1
+#   - classification       → generate + extract numeric label
+#
+# Benchmarks marked `enabled: false` are kept for reference but skipped at runtime.
+
+datasets:
+  "Logical Reasoning":
+    benchmarks:
+      # - benchmark_name: "BBH Logical Deduction (3, 5, 7 objects)"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset:
+      #     - "logical_deduction_three_objects"
+      #     - "logical_deduction_five_objects"
+      #     - "logical_deduction_seven_objects"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "mcq_generative"
+      - benchmark_name: "MMLU-Pro Logical Reasoning"
+        hf_repo: "TIGER-Lab/MMLU-Pro"
+        split: "test"
+        input_keys: ["question"]
+        choice_keys: ["options"]
+        answer_key: "answer"
+        metric_type: "mcq_generative"
+        # filter:
+        #   src:
+        #     - "ori_mmlu-formal_logic"
+        #     - "ori_mmlu-logical_fallacies"
+      # - benchmark_name: "MMLU Formal Logic"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "formal_logic"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+      # - benchmark_name: "LogiQA"
+      #   hf_repo: "lucasmccabe/logiqa"
+      #   revision: "refs/convert/parquet"
+      #   split: "validation"
+      #   input_keys: ["context", "query"]
+      #   choice_keys: ["options"]
+      #   answer_key: "correct_option"
+      #   metric_type: "mcq_generative"
+
+  "Causal Reasoning":
+    benchmarks:
+      # - benchmark_name: "BBH Causal Judgement"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset: "causal_judgement"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "exact_match_normalized"
+      - benchmark_name: "SuperGLUE COPA"
+        hf_repo: "aps/super_glue"
+        subset: "copa"
+        split: "train"
+        input_keys: ["premise"]
+        choice_keys: ["choice1", "choice2"]
+        answer_key: "label"
+        metric_type: "mcq_generative"
+
+  "Multi-Hop Reasoning":
+    benchmarks:
+      # - benchmark_name: "HotpotQA (Distractor)"
+      #   hf_repo: "hotpotqa/hotpot_qa"
+      #   subset: "distractor"
+      #   split: "validation"
+      #   enabled: false
+      #   notes: "Complex nested context structure — needs custom loader."
+      # - benchmark_name: "BBH Web of Lies"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset: "web_of_lies"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "exact_match_normalized"
+      # - benchmark_name: "CosmosQA"
+      #   hf_repo: "allenai/cosmos_qa"
+      #   split: "validation"
+      #   input_keys: ["context", "question"]
+      #   choice_keys: ["answer0", "answer1", "answer2", "answer3"]
+      #   answer_key: "label"
+      #   metric_type: "mcq_generative"
+      # - benchmark_name: "QASC"
+      #   hf_repo: "allenai/qasc"
+      #   split: "validation"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answerKey"
+      #   metric_type: "mcq_generative"
+      - benchmark_name: "MMLU-Pro"
+        hf_repo: "TIGER-Lab/MMLU-Pro"
+        split: "test"
+        input_keys: ["question"]
+        choice_keys: ["options"]
+        answer_key: "answer"
+        metric_type: "mcq_generative"
+
+  "Truthfulness / Factual Accuracy":
+    benchmarks:
+      - benchmark_name: "TruthfulQA Multiple Choice (MC1)"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "multiple_choice"
+        split: "validation"
+        input_keys: ["question", "mc1_targets"]
+        answer_key: "mc1_targets"
+        metric_type: "mcq_generative"
+      #- benchmark_name: "TruthfulQA Generation"
+      #  hf_repo: "truthfulqa/truthful_qa"
+      #  subset: "generation"
+      #  split: "validation"
+      #  input_keys: ["question"]
+      #  answer_key: "best_answer"
+      #  metric_type: "token_f1"
+      #- benchmark_name: "MMLU Global Facts"
+      #  hf_repo: "cais/mmlu"
+      #  split: "test"
+      #  input_keys: ["question", "choices"]
+      #  answer_key: "answer"
+      #  metric_type: "mcq_generative"
+
+  "Hallucination Reduction":
+    benchmarks:
+      - benchmark_name: "TruthfulQA Generation"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "generation"
+        split: "validation"
+        input_keys: ["question"]
+        answer_key: "best_answer"
+        metric_type: "token_f1"
+      - benchmark_name: "TruthfulQA Multiple Choice (MC1)"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "multiple_choice"
+        split: "validation"
+        input_keys: ["question", "mc1_targets"]
+        answer_key: "mc1_targets"
+        metric_type: "mcq_generative"
+
+  "Commonsense Reasoning":
+    benchmarks:
+      # - benchmark_name: "HellaSwag"
+      #   hf_repo: "Rowan/hellaswag"
+      #   subset: "default"
+      #   split: "validation"
+      #   input_keys: ["ctx", "endings"]
+      #   answer_key: "label"
+      #   metric_type: "mcq_generative"
+      # - benchmark_name: "Winogrande"
+      #   hf_repo: "allenai/winogrande"
+      #   subset: "winogrande_s"
+      #   split: "validation"
+      #   input_keys: ["sentence"]
+      #   choice_keys: ["option1", "option2"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+      #   answer_index_base: 1
+      - benchmark_name: "CommonsenseQA"
+        hf_repo: "tau/commonsense_qa"
+        split: "validation"
+        input_keys: ["question"]
+        choice_keys: ["choices.text"]
+        answer_key: "answerKey"
+        metric_type: "mcq_generative"
+      # - benchmark_name: "MMLU Moral Scenarios"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "moral_scenarios"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+
+  "Mathematical Problem Solving":
+    benchmarks:
+      # - benchmark_name: "GSM8K"
+      #   hf_repo: "openai/gsm8k"
+      #   subset: "main"
+      #   split: "test"
+      #   input_keys: ["question"]
+      #   answer_key: "answer"
+      #   metric_type: "exact_numeric"
+      # - benchmark_name: "BBH Multistep Arithmetic"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset: "multistep_arithmetic_two"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "exact_match_normalized"
+      - benchmark_name: "GSM8K-MC"
+        hf_repo: "guipenedo/gsm8k-mc"
+        split: "test"
+        input_keys: ["question"]
+        choice_keys: ["A", "B", "C", "D"]
+        answer_key: "Answer"
+        metric_type: "mcq_generative"
+      # - benchmark_name: "MMLU Elementary Math"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "elementary_mathematics"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+
+  "Table-Based Math Problem Solving":
+    benchmarks:
+      - benchmark_name: "WikiTableQuestions"
+        hf_repo: "stanfordnlp/wikitablequestions"
+        subset: "random-split-1"
+        split: "validation"
+        enabled: false
+        notes: "Complex table input — needs custom loader."
+      - benchmark_name: "SQL Create Context"
+        hf_repo: "b-mc2/sql-create-context"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "Code Generation":
+    benchmarks:
+      # - benchmark_name: "HumanEval"
+      #   hf_repo: "openai/openai_humaneval"
+      #   subset: "openai_humaneval"
+      #   split: "test"
+      #   enabled: false
+      #   notes: "Needs code execution — kept for future re-enable."
+      # - benchmark_name: "MBPP"
+      #   hf_repo: "google-research-datasets/mbpp"
+      #   subset: "full"
+      #   split: "test"
+      #   enabled: false
+      #   notes: "Needs code execution — kept for future re-enable."
+      - benchmark_name: "MMLU College Computer Science"
+        hf_repo: "cais/mmlu"
+        subset: "college_computer_science"
+        split: "test"
+        input_keys: ["question", "choices"]
+        answer_key: "answer"
+        metric_type: "mcq_generative"
+
+  "Conversational Contextual QA":
+    benchmarks:
+      - benchmark_name: "SQuAD 2.0"
+        hf_repo: "rajpurkar/squad_v2"
+        subset: "default"
+        split: "validation"
+        input_keys: ["context", "question"]
+        answer_key: "answers"
+        metric_type: "token_f1"
+      - benchmark_name: "QuAC"
+        hf_repo: "allenai/quac"
+        subset: "default"
+        split: "validation"
+        enabled: false
+        notes: "Conversational QA — needs dialogue history handling."
+
+  "Language-Based Task Completion":
+    benchmarks:
+      - benchmark_name: "SQL Create Context"
+        hf_repo: "b-mc2/sql-create-context"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+      - benchmark_name: "Spider"
+        hf_repo: "xlangai/spider"
+        subset: "default"
+        split: "validation"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "Stance Detection":
+    benchmarks:
+      - benchmark_name: "TweetEval Stance (Abortion)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_abortion"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+      - benchmark_name: "TweetEval Stance (Atheism)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_atheism"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+      - benchmark_name: "TweetEval Stance (Climate)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_climate"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+
+  "Creative Writing":
+    benchmarks:
+      - benchmark_name: "H4 Instruction Dataset"
+        hf_repo: "HuggingFaceH4/instruction-dataset"
+        subset: "default"
+        split: "test"
+        enabled: false
+        notes: "No clear reference answer for scoring."
+      - benchmark_name: "Alpaca Cleaned"
+        hf_repo: "yahma/alpaca-cleaned"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "No clear reference answer for scoring."
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Hypergraph (HGNN / EDGE_LOGREG / KFOLD) task ID mappings
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  "math-algebraic":
+    benchmarks:
+      - benchmark_name: "GSM8K"
+        hf_repo: "openai/gsm8k"
+        subset: "main"
+        split: "test"
+        input_keys: ["question"]
+        answer_key: "answer"
+        metric_type: "exact_numeric"
+      - benchmark_name: "BBH Multistep Arithmetic"
+        hf_repo: "lukaemon/bbh"
+        subset: "multistep_arithmetic_two"
+        split: "test"
+        input_keys: ["input"]
+        answer_key: "target"
+        metric_type: "exact_match_normalized"
+
+  "math-word-problems":
+    benchmarks:
+      # - benchmark_name: "GSM8K"
+      #   hf_repo: "openai/gsm8k"
+      #   subset: "main"
+      #   split: "test"
+      #   input_keys: ["question"]
+      #   answer_key: "answer"
+      #   metric_type: "exact_numeric"
+      # - benchmark_name: "BBH Multistep Arithmetic"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset: "multistep_arithmetic_two"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "exact_match_normalized"
+      - benchmark_name: "GSM8K-MC"
+        hf_repo: "guipenedo/gsm8k-mc"
+        split: "test"
+        input_keys: ["question"]
+        choice_keys: ["A", "B", "C", "D"]
+        answer_key: "Answer"
+        metric_type: "mcq_generative"
+      # - benchmark_name: "MMLU Elementary Math"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "elementary_mathematics"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+
+  "math-search-based":
+    benchmarks:
+      - benchmark_name: "BBH Multistep Arithmetic"
+        hf_repo: "lukaemon/bbh"
+        subset: "multistep_arithmetic_two"
+        split: "test"
+        input_keys: ["input"]
+        answer_key: "target"
+        metric_type: "exact_match_normalized"
+
+  "math-tabular":
+    benchmarks:
+      - benchmark_name: "WikiTableQuestions"
+        hf_repo: "stanfordnlp/wikitablequestions"
+        subset: "random-split-1"
+        split: "validation"
+        enabled: false
+        notes: "Complex table input — needs custom loader."
+      - benchmark_name: "SQL Create Context"
+        hf_repo: "b-mc2/sql-create-context"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "causal-reasoning":
+    benchmarks:
+      # - benchmark_name: "BBH Causal Judgement"
+      #   hf_repo: "lukaemon/bbh"
+      #   subset: "causal_judgement"
+      #   split: "test"
+      #   input_keys: ["input"]
+      #   answer_key: "target"
+      #   metric_type: "exact_match_normalized"
+      - benchmark_name: "SuperGLUE COPA"
+        hf_repo: "aps/super_glue"
+        subset: "copa"
+        split: "validation"
+        input_keys: ["premise"]
+        choice_keys: ["choice1", "choice2"]
+        answer_key: "label"
+        metric_type: "mcq_generative"
+
+  "code-gen":
+    benchmarks:
+      - benchmark_name: "HumanEval"
+        hf_repo: "openai/openai_humaneval"
+        subset: "openai_humaneval"
+        split: "test"
+        enabled: false
+        notes: "Needs code execution — kept for future re-enable."
+      - benchmark_name: "MBPP"
+        hf_repo: "google-research-datasets/mbpp"
+        subset: "full"
+        split: "test"
+        enabled: false
+        notes: "Needs code execution — kept for future re-enable."
+
+  "cf-qa":
+    benchmarks:
+      - benchmark_name: "HotpotQA (Distractor)"
+        hf_repo: "hotpotqa/hotpot_qa"
+        subset: "distractor"
+        split: "validation"
+        enabled: false
+        notes: "Complex nested context structure — needs custom loader."
+
+  "contextual-qa":
+    benchmarks:
+      - benchmark_name: "SQuAD 2.0"
+        hf_repo: "rajpurkar/squad_v2"
+        subset: "default"
+        split: "validation"
+        input_keys: ["context", "question"]
+        answer_key: "answers"
+        metric_type: "token_f1"
+
+  "conversational-qa":
+    benchmarks:
+      - benchmark_name: "SQuAD 2.0"
+        hf_repo: "rajpurkar/squad_v2"
+        subset: "default"
+        split: "validation"
+        input_keys: ["context", "question"]
+        answer_key: "answers"
+        metric_type: "token_f1"
+
+  "multi-hop-reasoning":
+    benchmarks:
+      - benchmark_name: "HotpotQA (Distractor)"
+        hf_repo: "hotpotqa/hotpot_qa"
+        subset: "distractor"
+        split: "validation"
+        enabled: false
+        notes: "Complex nested context — needs custom loader."
+      - benchmark_name: "BBH Web of Lies"
+        hf_repo: "lukaemon/bbh"
+        subset: "web_of_lies"
+        split: "test"
+        input_keys: ["input"]
+        answer_key: "target"
+        metric_type: "exact_match_normalized"
+
+  "hallucination-reduction":
+    benchmarks:
+      - benchmark_name: "TruthfulQA Generation"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "generation"
+        split: "validation"
+        input_keys: ["question"]
+        answer_key: "best_answer"
+        metric_type: "token_f1"
+      - benchmark_name: "TruthfulQA Multiple Choice (MC1)"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "multiple_choice"
+        split: "validation"
+        input_keys: ["question", "mc1_targets"]
+        answer_key: "mc1_targets"
+        metric_type: "mcq_generative"
+
+  "truthfulness":
+    benchmarks:
+      - benchmark_name: "TruthfulQA Multiple Choice (MC1)"
+        hf_repo: "truthfulqa/truthful_qa"
+        subset: "multiple_choice"
+        split: "validation"
+        input_keys: ["question", "mc1_targets"]
+        answer_key: "mc1_targets"
+        metric_type: "mcq_generative"
+      # - benchmark_name: "TruthfulQA Generation"
+      #   hf_repo: "truthfulqa/truthful_qa"
+      #   subset: "generation"
+      #   split: "validation"
+      #   input_keys: ["question"]
+      #   answer_key: "best_answer"
+      #   metric_type: "token_f1"
+      # - benchmark_name: "MMLU Global Facts"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "global_facts"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+
+  "stance-detection":
+    benchmarks:
+      - benchmark_name: "TweetEval Stance (Abortion)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_abortion"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+      - benchmark_name: "TweetEval Stance (Atheism)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_atheism"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+
+  "sentiment":
+    benchmarks:
+      - benchmark_name: "TweetEval Sentiment"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "sentiment"
+        split: "test"
+        input_keys: ["text"]
+        choice_keys: ["negative", "neutral", "positive"]
+        answer_key: "label"
+        metric_type: "mcq_generative"
+        answer_index_base: 0
+
+  "table-math":
+    benchmarks:
+      - benchmark_name: "WikiTableQuestions"
+        hf_repo: "stanfordnlp/wikitablequestions"
+        subset: "random-split-1"
+        split: "validation"
+        enabled: false
+        notes: "Complex table input — needs custom loader."
+      - benchmark_name: "SQL Create Context"
+        hf_repo: "b-mc2/sql-create-context"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "table-qa":
+    benchmarks:
+      - benchmark_name: "WikiTableQuestions"
+        hf_repo: "stanfordnlp/wikitablequestions"
+        subset: "random-split-1"
+        split: "validation"
+        enabled: false
+        notes: "Complex table input — needs custom loader."
+
+  "table-truth":
+    benchmarks:
+      - benchmark_name: "WikiTableQuestions"
+        hf_repo: "stanfordnlp/wikitablequestions"
+        subset: "random-split-1"
+        split: "validation"
+        enabled: false
+        notes: "Complex table input — needs custom loader."
+
+  "social-reasoning":
+    benchmarks:
+      - benchmark_name: "HellaSwag"
+        hf_repo: "Rowan/hellaswag"
+        subset: "default"
+        split: "validation"
+        input_keys: ["ctx", "endings"]
+        answer_key: "label"
+        metric_type: "mcq_generative"
+      # - benchmark_name: "MMLU Moral Scenarios"
+      #   hf_repo: "cais/mmlu"
+      #   subset: "moral_scenarios"
+      #   split: "test"
+      #   input_keys: ["question", "choices"]
+      #   answer_key: "answer"
+      #   metric_type: "mcq_generative"
+
+  "physical-reasoning":
+    benchmarks:
+      - benchmark_name: "HellaSwag"
+        hf_repo: "Rowan/hellaswag"
+        subset: "default"
+        split: "validation"
+        input_keys: ["ctx", "endings"]
+        answer_key: "label"
+        metric_type: "mcq_generative"
+
+  "nli":
+    benchmarks:
+      - benchmark_name: "BBH Logical Deduction (3 objects)"
+        hf_repo: "lukaemon/bbh"
+        subset: "logical_deduction_three_objects"
+        split: "test"
+        input_keys: ["input"]
+        answer_key: "target"
+        metric_type: "mcq_generative"
+      - benchmark_name: "MMLU Formal Logic"
+        hf_repo: "cais/mmlu"
+        subset: "formal_logic"
+        split: "test"
+        input_keys: ["question", "choices"]
+        answer_key: "answer"
+        metric_type: "mcq_generative"
+
+  "summarization":
+    benchmarks:
+      - benchmark_name: "H4 Instruction Dataset"
+        hf_repo: "HuggingFaceH4/instruction-dataset"
+        subset: "default"
+        split: "test"
+        enabled: false
+        notes: "No clear reference answer for scoring."
+
+  "machine-translation":
+    benchmarks:
+      - benchmark_name: "SQL Create Context"
+        hf_repo: "b-mc2/sql-create-context"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "text-classification":
+    benchmarks:
+      - benchmark_name: "TweetEval Stance (Abortion)"
+        hf_repo: "cardiffnlp/tweet_eval"
+        subset: "stance_abortion"
+        split: "test"
+        input_keys: ["text"]
+        answer_key: "label"
+        metric_type: "classification"
+        label_map_text: "Labels: 0 = None, 1 = Against, 2 = Favor"
+
+  "ner":
+    benchmarks:
+      - benchmark_name: "Spider"
+        hf_repo: "xlangai/spider"
+        subset: "default"
+        split: "validation"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "relation-extraction":
+    benchmarks:
+      - benchmark_name: "Spider"
+        hf_repo: "xlangai/spider"
+        subset: "default"
+        split: "validation"
+        enabled: false
+        notes: "SQL generation — needs execution-based eval."
+
+  "paraphrasing":
+    benchmarks:
+      - benchmark_name: "Alpaca Cleaned"
+        hf_repo: "yahma/alpaca-cleaned"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "No clear reference answer for scoring."
+
+  "recommender":
+    benchmarks:
+      - benchmark_name: "Alpaca Cleaned"
+        hf_repo: "yahma/alpaca-cleaned"
+        subset: "default"
+        split: "train"
+        enabled: false
+        notes: "No clear reference answer for scoring."
+
+  "wsd":
+    benchmarks:
+      - benchmark_name: "BBH Logical Deduction (3 objects)"
+        hf_repo: "lukaemon/bbh"
+        subset: "logical_deduction_three_objects"
+        split: "test"
+        input_keys: ["input"]
+        answer_key: "target"
+        metric_type: "mcq_generative"
+
+# Flat-graph task label aliases → datasets keys
+task_aliases:
+  "Algebraic Math (AQuA, MATH)": "math-algebraic"
+  "commonsense-reasoning": "social-reasoning"
+  "Context-Free Question Answering": "cf-qa"
+  "Contextual Question Answering": "contextual-qa"
+  "dialogue": "conversational-qa"
+  "Dialogue Systems": "conversational-qa"
+  "Causal Reasoning": "causal-reasoning"
+  "Code Generation": "code-gen"
+  "Emotion / Sentiment Understanding": "sentiment"
+  "free-response": "Creative Writing"
+  "Free Response Generation": "Creative Writing"
+  "Hallucination Reduction": "hallucination-reduction"
+  "logical-reasoning": "Logical Reasoning"
+  "Machine Translation": "machine-translation"
+  "Math Word Problems (GSM8K, SVAMP)": "math-word-problems"
+  "Multilabel Text Classification": "text-classification"
+  "Named Entity Recognition": "ner"
+  "Natural Language Inference": "nli"
+  "Physical Reasoning / Simulation": "physical-reasoning"
+  "Recommender Systems": "recommender"
+  "Relation Extraction": "relation-extraction"
+  "Search-based Math (Game of 24)": "math-search-based"
+  "Social Reasoning": "social-reasoning"
+  "spatial-qa": "contextual-qa"
+  "Spatial Question Answering": "contextual-qa"
+  "Stance Detection": "stance-detection"
+  "Table-Based Question Answering": "table-qa"
+  "Table-Based Truthfulness": "table-truth"
+  "Tabular Math (FinQA, TabMWP)": "math-tabular"
+  "task-completion": "Language-Based Task Completion"
+  "Truthfulness / Factual Accuracy": "truthfulness"
+  "Word Sense Disambiguation": "wsd"
