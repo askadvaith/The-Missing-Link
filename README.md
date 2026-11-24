@@ -11,6 +11,26 @@ This repo contains:
 
 ---
 
+## Paper
+https://doi.org/10.1007/978-3-032-38407-2_15
+
+If you utilise this work, please cite:
+```bibtex
+@InProceedings{10.1007/978-3-032-38407-2_15,
+author="Kumar, Advaith Sanil
+and Patil, Abhay
+and Dcosta, Austin
+and Das, Bhaskarjyoti",
+title="The Missing Link: Knowledge Graph-Guided Discovery of Novel Prompt Compositions",
+booktitle="Artificial Neural Networks and Machine Learning -- ICANN 2026",
+year="2027",
+publisher="Springer Nature Switzerland",
+address="Cham",
+pages="181--192",
+isbn="978-3-032-38407-2"
+}
+```
+
 ## Directory Structure
 
 ```text
